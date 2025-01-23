@@ -1,0 +1,33 @@
+# Build artifacts
+bin/
+obj/**/**.*
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ASP.NET Core
+wwwroot/
+node_modules/
+*.db
+*.sqlite
+appsettings.*.json
+
+# Logs
+*.log
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# Backup files
+*.bak
+*.swp
+
+# Dependency directories
+packages/
