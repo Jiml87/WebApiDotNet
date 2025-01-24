@@ -5,7 +5,7 @@ namespace WebApi.Models
     public class ConfigurationItem
     {
         [Required]
-        [StringLength(100)]
+        [StringLength(55)]
         public string Key { get; set; }
 
         [Required]
