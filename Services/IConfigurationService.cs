@@ -6,6 +6,7 @@ namespace System.Services
 {
     public interface IConfigurationService
     {
-        IEnumerable<ConfigurationItem> GetItems();
+        Task<IEnumerable<ConfigurationItem>> GetItems();
+        Task<ConfigurationItem> AddItem(ConfigurationItem item);
     }
 }

@@ -12,7 +12,7 @@ namespace WebApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ConfigurationItem>().HasNoKey();
+            modelBuilder.Entity<ConfigurationItem>().HasKey(e => e.Key);
         }
 
         public DbSet<ConfigurationItem> ConfigurationItems { get; set; }
@@ -21,7 +21,7 @@ namespace WebApi.Data
         {
             var sql = @"
                 CREATE TABLE IF NOT EXISTS ConfigurationItems (
-                    Key NCHAR(55) NOT NULL UNIQUE,
+                    Key NCHAR(55) PRIMARY KEY NOT NULL UNIQUE,
                     Value VARCHAR(255) NOT NULL
                 );
             ";
