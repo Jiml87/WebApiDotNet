@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using System.Services; 
+// using System.Services; 
 using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
 // using System.Linq;
 
@@ -11,6 +12,14 @@ using WebApi.Data;
 
 namespace WebApi.Services
 {
+    public interface IConfigurationService
+    {
+        Task<IEnumerable<ConfigurationItem>> GetItems();
+        Task<ConfigurationItem> AddItem(ConfigurationItem item);
+        Task<ConfigurationItem> UpdateItemByKey(string key, string value);
+        Task<ConfigurationItem> GetItemByKey(string key);
+        Task<ConfigurationItem> DeleteItemByKey(string key);
+    }
     
     public class ConfigurationService : IConfigurationService
     {
@@ -50,8 +59,7 @@ namespace WebApi.Services
 
         public async Task<ConfigurationItem> UpdateItemByKey(string key, string value)
         {
-            var existingItem = await _dbContext.ConfigurationItems
-                                            .FirstOrDefaultAsync(c => c.Key == key);
+            var existingItem = await _dbContext.ConfigurationItems.FirstOrDefaultAsync(c => c.Key == key);
 
             if (existingItem == null)
             {
@@ -66,8 +74,7 @@ namespace WebApi.Services
 
         public async Task<ConfigurationItem> GetItemByKey(string key)
         {
-            var existingItem = await _dbContext.ConfigurationItems
-                                            .FirstOrDefaultAsync(c => c.Key == key);
+            var existingItem = await _dbContext.ConfigurationItems.FirstOrDefaultAsync(c => c.Key == key);
 
             if (existingItem == null)
             {
@@ -78,14 +85,12 @@ namespace WebApi.Services
         }
         public async Task<ConfigurationItem> DeleteItemByKey(string key)
         {
-            var existingItem = await _dbContext.ConfigurationItems
-                                            .FirstOrDefaultAsync(c => c.Key == key);
+            var existingItem = await _dbContext.ConfigurationItems.FirstOrDefaultAsync(c => c.Key == key);
 
             if (existingItem != null)
             {
                 _dbContext.ConfigurationItems.Remove(existingItem); 
-                var a = await _dbContext.SaveChangesAsync();
-                Console.WriteLine(a.ToString());
+                await _dbContext.SaveChangesAsync();
 
             } 
             else

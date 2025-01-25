@@ -1,7 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-// using Microsoft.EntityFrameworkCore.Sqlite;
-
-using System.Services;
 using WebApi.Services;
 using WebApi.Data;
 
@@ -9,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
+builder.Services.AddScoped<WebApi.Services.IConfigurationService, ConfigurationService>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=app.db"));
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
