@@ -14,7 +14,7 @@ namespace WebApi.Services
 {
     public interface IConfigurationService
     {
-        Task<IEnumerable<ConfigurationItem>> GetItems();
+        Task<IEnumerable<ConfigurationItem>> GetItems(string keyPattern);
         Task<ConfigurationItem> AddItem(ConfigurationItem item);
         Task<ConfigurationItem> UpdateItemByKey(string key, string value);
         Task<ConfigurationItem> GetItemByKey(string key);
@@ -30,7 +30,7 @@ namespace WebApi.Services
             _dbContext = context;
         }
 
-        public async Task<IEnumerable<ConfigurationItem>> GetItems()
+        public async Task<IEnumerable<ConfigurationItem>> GetItems(string keyPattern)
         {
             var items = await _dbContext.ConfigurationItems.ToListAsync();
             return items;
@@ -59,44 +59,24 @@ namespace WebApi.Services
 
         public async Task<ConfigurationItem> UpdateItemByKey(string key, string value)
         {
-            var existingItem = await _dbContext.ConfigurationItems.FirstOrDefaultAsync(c => c.Key == key);
-
-            if (existingItem == null)
-            {
-                return null;
-            }
-
+            var existingItem = await _dbContext.ConfigurationItems.SingleAsync(c => c.Key == key);
             existingItem.Value = value;
-
             await _dbContext.SaveChangesAsync();
+
             return existingItem;
         }
 
         public async Task<ConfigurationItem> GetItemByKey(string key)
         {
-            var existingItem = await _dbContext.ConfigurationItems.FirstOrDefaultAsync(c => c.Key == key);
-
-            if (existingItem == null)
-            {
-                return null;
-            }
+            var existingItem = await _dbContext.ConfigurationItems.SingleAsync(c => c.Key == key);
 
             return existingItem;
         }
         public async Task<ConfigurationItem> DeleteItemByKey(string key)
         {
-            var existingItem = await _dbContext.ConfigurationItems.FirstOrDefaultAsync(c => c.Key == key);
-
-            if (existingItem != null)
-            {
-                _dbContext.ConfigurationItems.Remove(existingItem); 
-                await _dbContext.SaveChangesAsync();
-
-            } 
-            else
-            {
-                return null;
-            }
+            var existingItem = await _dbContext.ConfigurationItems.SingleAsync(c => c.Key == key);
+            _dbContext.ConfigurationItems.Remove(existingItem); 
+            await _dbContext.SaveChangesAsync();
 
             return existingItem;
         }

@@ -16,12 +16,7 @@ namespace WebApi.Controllers
             _configurationService = configurationService;
         }
     
-        [HttpGet]
-        public IActionResult GetConfigurationItems()
-        {
-            var items = _configurationService.GetItems();
-            return Ok(items);
-        }
+        
 
         [HttpPost]
         public async Task<IActionResult> AddItem([FromBody] ConfigurationItemDto dto)
@@ -56,42 +51,19 @@ namespace WebApi.Controllers
             {
                 var updatedItem = await _configurationService.UpdateItemByKey(key, JsonSerializer.Serialize(data));
 
-                if (updatedItem == null)
-                {
-                    return NotFound($"ConfigurationItem with Key {key} not found.");
-                }
-
                 return Ok(updatedItem);
             }
-            catch(Exception ex)
+            catch (InvalidOperationException exc)
             {
-                // TODO: log error
-                return BadRequest();
-            }
-
-        }
-
-        [HttpGet("{key}")]
-        public async Task<IActionResult> GetConfigurationItem(string key)
-        {
-            try 
-            {
-                var item = await _configurationService.GetItemByKey(key);
-
-                if (item == null)
-                {
-                    return NotFound($"ConfigurationItem with Key {key} not found.");
-                }
-
-                return Ok(item);
+                return NotFound($"ConfigurationItem with Key {key} not found.");
             }
             catch(Exception ex)
             {
                 // TODO: log error
                 return BadRequest();
             }
-
         }
+
         [HttpDelete("{key}")]
         public async Task<IActionResult> DeleteConfigurationItem(string key)
         {
@@ -99,12 +71,11 @@ namespace WebApi.Controllers
             {
                 var item = await _configurationService.DeleteItemByKey(key);
 
-                if (item == null)
-                {
-                    return NotFound($"ConfigurationItem with Key {key} not found.");
-                }
-
                 return NoContent();
+            }
+            catch (InvalidOperationException exc)
+            {
+                return NotFound($"ConfigurationItem with Key {key} not found.");
             }
             catch(Exception ex)
             {
@@ -112,6 +83,42 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
+        }
+
+        [HttpGet("item/{key}")]
+        public async Task<IActionResult> GetConfigurationItem(string key)
+        {
+            try 
+            {
+                var item = await _configurationService.GetItemByKey(key);
+
+                return Ok(item);
+            }
+            catch (InvalidOperationException exc)
+            {
+                return NotFound($"ConfigurationItem with Key {key} not found.");
+            }
+            catch(Exception ex)
+            {
+                // TODO: log error
+                return BadRequest();
+            }
+
+        }
+
+        [HttpGet("search")]
+        public IActionResult GetConfigurationItems([FromQuery] string keyPattern)
+        {
+            try
+            {
+                var items = _configurationService.GetItems(keyPattern);
+                return Ok(items);
+            }
+            catch (Exception)
+            {
+                // TODO: log error
+                return BadRequest();
+            }
         }
     }
 
