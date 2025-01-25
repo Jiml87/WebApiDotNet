@@ -3,6 +3,7 @@ using System.Services;
 using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 using System.Data.SqlClient;
+
 // using System.Linq;
 
 using WebApi.Models;
@@ -28,20 +29,16 @@ namespace WebApi.Services
 
         public async Task<ConfigurationItem> AddItem(ConfigurationItem item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
- 
             try
             {
                 _dbContext.ConfigurationItems.Add(item);
                 await _dbContext.SaveChangesAsync();
+                
                 return item;
             }
             catch (DbUpdateException dbEx)
             {
-                // Check if it's a SQLite UNIQUE constraint violation
+                // Check SQLite UNIQUE constraint violation
                 if (dbEx.InnerException is SqliteException sqliteEx && sqliteEx.SqliteErrorCode == 19)
                 {
                    

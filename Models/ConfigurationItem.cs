@@ -5,10 +5,6 @@ namespace WebApi.Models
 {
     public class ConfigurationItem
     {
-        // [Key]
-        // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        // public int Id { get; set; } 
-
         [Required]
         [StringLength(55)]
         public required string Key { get; set; }

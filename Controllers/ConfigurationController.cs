@@ -3,6 +3,7 @@ using System.Services;
 
 using WebApi.Models;
 using WebApi.Services;
+using System.Text.Json;
 
 namespace WebApi.Controllers
 {
@@ -24,18 +25,19 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddItem([FromBody] ConfigurationItem item)
+        public async Task<IActionResult> AddItem([FromBody] ConfigurationItemDto dto)
         {
-            if (item == null)
-            {
-                return BadRequest("Item cannot be null.");
-            }
-
             try
             {
-                var addedItem = await _configurationService.AddItem(item);
+                var configurationItem = new ConfigurationItem
+                {
+                    Key = dto.Key,
+                    Value = JsonSerializer.Serialize(dto.Value)
+                };
+                
+                var addedItem = await _configurationService.AddItem(configurationItem);
           
-                return StatusCode(201, addedItem);
+                return Created("v1/api/[controller]", addedItem);
             }
             catch (InvalidOperationException ex)
             {
@@ -43,7 +45,10 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Bad request: {ex.Message}");
+                Console.WriteLine("!!!!!!!!!!!!!!!!!");
+                Console.WriteLine(ex.ToString());
+                // TODO: log error
+                return BadRequest();
             }
         }
     }
