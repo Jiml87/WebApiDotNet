@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 using WebApi.Models;
 using WebApi.Services;
@@ -11,9 +12,11 @@ namespace WebApi.Controllers
     public class ConfigurationController : ControllerBase
     {
         private readonly IConfigurationService _configurationService;
-        public ConfigurationController(IConfigurationService configurationService)
+        private readonly ILogger<ConfigurationController> _logger;
+        public ConfigurationController(IConfigurationService configurationService, ILogger<ConfigurationController> logger)
         {
             _configurationService = configurationService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -40,9 +43,9 @@ namespace WebApi.Controllers
                 var items = _configurationService.GetItems(keyPattern, pageNumber, pageSize);
                 return Ok(items);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log error
+                _logger.LogError(ex, "An error occurred while fetching configuration items.");
                 return BadRequest();
             }
         }
@@ -74,13 +77,14 @@ namespace WebApi.Controllers
 
                 return Ok(item);
             }
-            catch (InvalidOperationException exc)
+            catch (InvalidOperationException ex)
             {
-                return NotFound($"ConfigurationItem with Key {key} not found.");
+                _logger.LogWarning($"Configuration item with key \"{key}\" not found: {ex.Message}");
+                return NotFound($"ConfigurationItem with Key \"{key}\" not found.");
             }
             catch(Exception ex)
             {
-                // TODO: log error
+                _logger.LogError(ex, "An error occurred while retrieving configuration item.");
                 return BadRequest();
             }
 
@@ -122,11 +126,12 @@ namespace WebApi.Controllers
             }
             catch (InvalidOperationException ex)
             {
+                _logger.LogWarning($"Conflict occurred while adding configuration item with key \"{data.Key}\": {ex.Message}");
                 return Conflict(ex.Message);
             }
             catch (Exception ex)
             {
-                // TODO: log error
+                 _logger.LogError(ex, "An error occurred while adding configuration item.");
                 return BadRequest();
             }
         }
@@ -159,13 +164,14 @@ namespace WebApi.Controllers
 
                 return Ok(updatedItem);
             }
-            catch (InvalidOperationException exc)
+            catch (InvalidOperationException ex)
             {
-                return NotFound($"ConfigurationItem with Key {key} not found.");
+                _logger.LogWarning($"ConfigurationItem with Key \"{key}\" not found: {ex.Message}");
+                return NotFound($"ConfigurationItem with Key \"{key}\" not found.");
             }
             catch(Exception ex)
             {
-                // TODO: log error
+                _logger.LogError(ex, "An error occurred while updating configuration item.");
                 return BadRequest();
             }
         }
@@ -197,13 +203,14 @@ namespace WebApi.Controllers
 
                 return NoContent();
             }
-            catch (InvalidOperationException exc)
+            catch (InvalidOperationException ex)
             {
-                return NotFound($"ConfigurationItem with Key {key} not found.");
+                _logger.LogWarning($"Configuration item with key \"{key}\" not found for deletion: {ex.Message}");
+                return NotFound($"ConfigurationItem with Key \"{key}\" not found.");
             }
             catch(Exception ex)
             {
-                // TODO: log error
+                _logger.LogError(ex, "An error occurred while deleting configuration item.");
                 return BadRequest();
             }
 

@@ -4,6 +4,7 @@ using WebApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddLogging();
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<WebApi.Services.IConfigurationService, ConfigurationService>();
