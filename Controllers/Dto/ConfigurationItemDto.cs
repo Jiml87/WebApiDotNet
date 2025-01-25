@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-public class ConfigurationItemDto
+public class CreateConfigurationItemDto
 {
     [Required]
     [StringLength(55)]

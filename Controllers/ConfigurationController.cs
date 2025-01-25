@@ -64,7 +64,7 @@ namespace WebApi.Controllers
         
 
         [HttpPost]
-        public async Task<IActionResult> AddItem([FromBody] ConfigurationItemDto dto)
+        public async Task<IActionResult> AddItem([FromBody] CreateConfigurationItemDto dto)
         {
             try
             {
