@@ -15,6 +15,51 @@ namespace WebApi.Controllers
         {
             _configurationService = configurationService;
         }
+
+        [HttpGet("search")]
+        public IActionResult GetConfigurationItems(
+            [FromQuery] string keyPattern,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10
+        )
+        {
+            try
+            {
+                if (pageNumber <= 0 || pageSize <= 0)
+                {
+                    return BadRequest("PageNumber and PageSize must be greater than 0.");
+                }
+                
+                var items = _configurationService.GetItems(keyPattern, pageNumber, pageSize);
+                return Ok(items);
+            }
+            catch (Exception)
+            {
+                // TODO: log error
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("item/{key}")]
+        public async Task<IActionResult> GetConfigurationItem(string key)
+        {
+            try 
+            {
+                var item = await _configurationService.GetItemByKey(key);
+
+                return Ok(item);
+            }
+            catch (InvalidOperationException exc)
+            {
+                return NotFound($"ConfigurationItem with Key {key} not found.");
+            }
+            catch(Exception ex)
+            {
+                // TODO: log error
+                return BadRequest();
+            }
+
+        }
     
         
 
@@ -83,42 +128,6 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
-        }
-
-        [HttpGet("item/{key}")]
-        public async Task<IActionResult> GetConfigurationItem(string key)
-        {
-            try 
-            {
-                var item = await _configurationService.GetItemByKey(key);
-
-                return Ok(item);
-            }
-            catch (InvalidOperationException exc)
-            {
-                return NotFound($"ConfigurationItem with Key {key} not found.");
-            }
-            catch(Exception ex)
-            {
-                // TODO: log error
-                return BadRequest();
-            }
-
-        }
-
-        [HttpGet("search")]
-        public IActionResult GetConfigurationItems([FromQuery] string keyPattern)
-        {
-            try
-            {
-                var items = _configurationService.GetItems(keyPattern);
-                return Ok(items);
-            }
-            catch (Exception)
-            {
-                // TODO: log error
-                return BadRequest();
-            }
         }
     }
 

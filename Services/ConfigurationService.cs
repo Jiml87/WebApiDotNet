@@ -1,11 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-// using System.Services; 
 using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 using System.Data.SqlClient;
 using System.Collections.Generic;
-
-// using System.Linq;
 
 using WebApi.Models;
 using WebApi.Data;
@@ -14,7 +11,7 @@ namespace WebApi.Services
 {
     public interface IConfigurationService
     {
-        Task<IEnumerable<ConfigurationItem>> GetItems(string keyPattern);
+        Task<IEnumerable<ConfigurationItem>> GetItems(string keyPattern, int pageNumber, int pageSize);
         Task<ConfigurationItem> AddItem(ConfigurationItem item);
         Task<ConfigurationItem> UpdateItemByKey(string key, string value);
         Task<ConfigurationItem> GetItemByKey(string key);
@@ -30,17 +27,29 @@ namespace WebApi.Services
             _dbContext = context;
         }
 
-        public async Task<IEnumerable<ConfigurationItem>> GetItems(string keyPattern)
+        public async Task<IEnumerable<ConfigurationItem>> GetItems(string keyPattern, int pageNumber, int pageSize)
         {
-            var items = await _dbContext.ConfigurationItems.ToListAsync();
+            Console.WriteLine(keyPattern);
+            var items = await _dbContext.ConfigurationItems
+                .Where(p => p.Key.Contains(keyPattern))
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
             return items;
+        }
+
+        public async Task<ConfigurationItem> GetItemByKey(string key)
+        {
+            var existingItem = await _dbContext.ConfigurationItems.SingleAsync(c => c.Key == key);
+
+            return existingItem;
         }
 
         public async Task<ConfigurationItem> AddItem(ConfigurationItem item)
         {
             try
             {
-                _dbContext.ConfigurationItems.Add(item);
+                await _dbContext.ConfigurationItems.AddAsync(item);
                 await _dbContext.SaveChangesAsync();
                 
                 return item;
@@ -66,12 +75,6 @@ namespace WebApi.Services
             return existingItem;
         }
 
-        public async Task<ConfigurationItem> GetItemByKey(string key)
-        {
-            var existingItem = await _dbContext.ConfigurationItems.SingleAsync(c => c.Key == key);
-
-            return existingItem;
-        }
         public async Task<ConfigurationItem> DeleteItemByKey(string key)
         {
             var existingItem = await _dbContext.ConfigurationItems.SingleAsync(c => c.Key == key);
