@@ -16,6 +16,13 @@ namespace WebApi.Controllers
             _configurationService = configurationService;
         }
 
+        /// <summary>
+        /// Gets a paginated list of configuration items matching the key pattern.
+        /// </summary>
+        /// <param name="keyPattern">The key pattern to search for.</param>
+        /// <param name="pageNumber">The page number for pagination.</param>
+        /// <param name="pageSize">The number of items per page.</param>
+        /// <returns>A list of matching configuration items.</returns>
         [HttpGet("search")]
         public IActionResult GetConfigurationItems(
             [FromQuery] string keyPattern,
@@ -40,6 +47,24 @@ namespace WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves a configuration item by its key.
+        /// </summary>
+        /// <param name="key">The unique key of the configuration item to retrieve.</param>
+        /// <returns>
+        /// Returns a status code of:
+        /// <list type="bullet">
+        /// <item>
+        /// <description><c>200 OK</c>: If the configuration item is found.</description>
+        /// </item>
+        /// <item>
+        /// <description><c>404 Not Found</c>: If no configuration item with the specified key is found.</description>
+        /// </item>
+        /// <item>
+        /// <description><c>400 Bad Request</c>: If an error occurs during the operation.</description>
+        /// </item>
+        /// </list>
+        /// </returns>
         [HttpGet("item/{key}")]
         public async Task<IActionResult> GetConfigurationItem(string key)
         {
@@ -62,16 +87,33 @@ namespace WebApi.Controllers
         }
     
         
-
+        /// <summary>
+        /// Adds a new configuration item.
+        /// </summary>
+        /// <param name="data">The data transfer object containing the key and value of the configuration item to be added.</param>
+        /// <returns>
+        /// Returns a status code of:
+        /// <list type="bullet">
+        /// <item>
+        /// <description><c>201 Created</c>: If the configuration item is successfully created.</description>
+        /// </item>
+        /// <item>
+        /// <description><c>409 Conflict</c>: If a configuration item with the same key already exists.</description>
+        /// </item>
+        /// <item>
+        /// <description><c>400 Bad Request</c>: If an error occurs during the operation.</description>
+        /// </item>
+        /// </list>
+        /// </returns>
         [HttpPost]
-        public async Task<IActionResult> AddItem([FromBody] CreateConfigurationItemDto dto)
+        public async Task<IActionResult> AddItem([FromBody] CreateConfigurationItemDto data)
         {
             try
             {
                 var configurationItem = new ConfigurationItem
                 {
-                    Key = dto.Key,
-                    Value = JsonSerializer.Serialize(dto.Value)
+                    Key = data.Key,
+                    Value = JsonSerializer.Serialize(data.Value)
                 };
                 
                 var addedItem = await _configurationService.AddItem(configurationItem);
@@ -89,6 +131,25 @@ namespace WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates an existing configuration item by its key.
+        /// </summary>
+        /// <param name="key">The unique key of the configuration item to update.</param>
+        /// <param name="data">The new value for the configuration item.</param>
+        /// <returns>
+        /// Returns a status code of:
+        /// <list type="bullet">
+        /// <item>
+        /// <description><c>200 OK</c>: If the configuration item is successfully updated, returns the updated item.</description>
+        /// </item>
+        /// <item>
+        /// <description><c>404 Not Found</c>: If no configuration item with the specified key is found.</description>
+        /// </item>
+        /// <item>
+        /// <description><c>400 Bad Request</c>: If an error occurs during the operation.</description>
+        /// </item>
+        /// </list>
+        /// </returns>
         [HttpPut("{key}")]
         public async Task<IActionResult> UpdateConfigurationItem(string key, [FromBody] object data)
         {
@@ -109,6 +170,24 @@ namespace WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes a configuration item by its key.
+        /// </summary>
+        /// <param name="key">The unique key of the configuration item to delete.</param>
+        /// <returns>
+        /// Returns a status code of:
+        /// <list type="bullet">
+        /// <item>
+        /// <description><c>204 No Content</c>: If the configuration item is successfully deleted.</description>
+        /// </item>
+        /// <item>
+        /// <description><c>404 Not Found</c>: If no configuration item with the specified key is found.</description>
+        /// </item>
+        /// <item>
+        /// <description><c>400 Bad Request</c>: If an error occurs during the operation.</description>
+        /// </item>
+        /// </list>
+        /// </returns>
         [HttpDelete("{key}")]
         public async Task<IActionResult> DeleteConfigurationItem(string key)
         {

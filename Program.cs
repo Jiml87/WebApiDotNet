@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<WebApi.Services.IConfigurationService, ConfigurationService>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=app.db"));
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 // Add Swagger services
@@ -22,6 +22,13 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Description = "An API to manage configuration items."
     });
+});
+// swagger documentation from comments in Controllers
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
 });
 
 var app = builder.Build();
