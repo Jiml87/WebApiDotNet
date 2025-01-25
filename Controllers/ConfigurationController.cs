@@ -18,7 +18,7 @@ namespace WebApi.Controllers
         }
     
         [HttpGet]
-        public IActionResult GetItems()
+        public IActionResult GetConfigurationItems()
         {
             var items = _configurationService.GetItems();
             return Ok(items);
@@ -50,6 +50,50 @@ namespace WebApi.Controllers
                 // TODO: log error
                 return BadRequest();
             }
+        }
+
+        [HttpPut("{key}")]
+        public async Task<IActionResult> UpdateConfigurationItem(string key, [FromBody] object data)
+        {
+            try 
+            {
+                var updatedItem = await _configurationService.UpdateItemByKey(key, JsonSerializer.Serialize(data));
+
+                if (updatedItem == null)
+                {
+                    return NotFound($"ConfigurationItem with Key {key} not found.");
+                }
+
+                return Ok(updatedItem);
+            }
+            catch(Exception ex)
+            {
+                // TODO: log error
+                return BadRequest();
+            }
+
+        }
+
+        [HttpGet("{key}")]
+        public async Task<IActionResult> GetConfigurationItem(string key)
+        {
+            try 
+            {
+                var item = await _configurationService.GetItemByKey(key);
+
+                if (item == null)
+                {
+                    return NotFound($"ConfigurationItem with Key {key} not found.");
+                }
+
+                return Ok(item);
+            }
+            catch(Exception ex)
+            {
+                // TODO: log error
+                return BadRequest();
+            }
+
         }
     }
 

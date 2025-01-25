@@ -8,5 +8,7 @@ namespace System.Services
     {
         Task<IEnumerable<ConfigurationItem>> GetItems();
         Task<ConfigurationItem> AddItem(ConfigurationItem item);
+        Task<ConfigurationItem> UpdateItemByKey(string key, string value);
+        Task<ConfigurationItem> GetItemByKey(string key);
     }
 }

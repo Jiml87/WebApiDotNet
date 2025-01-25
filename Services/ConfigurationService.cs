@@ -46,7 +46,35 @@ namespace WebApi.Services
                 }
                 throw;
             }
+        }
 
+        public async Task<ConfigurationItem> UpdateItemByKey(string key, string value)
+        {
+            var existingItem = await _dbContext.ConfigurationItems
+                                            .FirstOrDefaultAsync(c => c.Key == key);
+
+            if (existingItem == null)
+            {
+                return null;
+            }
+
+            existingItem.Value = value;
+
+            await _dbContext.SaveChangesAsync();
+            return existingItem;
+        }
+
+        public async Task<ConfigurationItem> GetItemByKey(string key)
+        {
+            var existingItem = await _dbContext.ConfigurationItems
+                                            .FirstOrDefaultAsync(c => c.Key == key);
+
+            if (existingItem == null)
+            {
+                return null;
+            }
+
+            return existingItem;
         }
     }
 }
