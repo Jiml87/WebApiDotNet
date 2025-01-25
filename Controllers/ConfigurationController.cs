@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Services;
+using System.Text.Json;
 
 using WebApi.Models;
 using WebApi.Services;
-using System.Text.Json;
 
 namespace WebApi.Controllers
 {
@@ -45,8 +45,6 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("!!!!!!!!!!!!!!!!!");
-                Console.WriteLine(ex.ToString());
                 // TODO: log error
                 return BadRequest();
             }
@@ -87,6 +85,27 @@ namespace WebApi.Controllers
                 }
 
                 return Ok(item);
+            }
+            catch(Exception ex)
+            {
+                // TODO: log error
+                return BadRequest();
+            }
+
+        }
+        [HttpDelete("{key}")]
+        public async Task<IActionResult> DeleteConfigurationItem(string key)
+        {
+            try 
+            {
+                var item = await _configurationService.DeleteItemByKey(key);
+
+                if (item == null)
+                {
+                    return NotFound($"ConfigurationItem with Key {key} not found.");
+                }
+
+                return NoContent();
             }
             catch(Exception ex)
             {

@@ -76,5 +76,24 @@ namespace WebApi.Services
 
             return existingItem;
         }
+        public async Task<ConfigurationItem> DeleteItemByKey(string key)
+        {
+            var existingItem = await _dbContext.ConfigurationItems
+                                            .FirstOrDefaultAsync(c => c.Key == key);
+
+            if (existingItem != null)
+            {
+                _dbContext.ConfigurationItems.Remove(existingItem); 
+                var a = await _dbContext.SaveChangesAsync();
+                Console.WriteLine(a.ToString());
+
+            } 
+            else
+            {
+                return null;
+            }
+
+            return existingItem;
+        }
     }
 }
