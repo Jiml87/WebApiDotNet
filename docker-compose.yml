@@ -5,7 +5,7 @@ services:
     build: .
     container_name: webapi
     ports:
-      - "5089:80"  # Map container's port 80 to host's port 5089
+      - "5089:5089"  # Map container's port 80 to host's port 5089
     environment:
       - ASPNETCORE_ENVIRONMENT=Development  # Set your environment here (Development, Production)
     volumes:
