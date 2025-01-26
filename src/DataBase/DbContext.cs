@@ -21,7 +21,7 @@ namespace WebApi.Data
         {
             var sql = @"
                 CREATE TABLE IF NOT EXISTS ConfigurationItems (
-                    Key NCHAR(55) PRIMARY KEY NOT NULL UNIQUE,
+                    Key NCHAR(55) PRIMARY KEY,
                     Value VARCHAR(255) NOT NULL
                 );
             ";
